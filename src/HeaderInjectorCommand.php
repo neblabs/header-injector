@@ -9,6 +9,7 @@ use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Input\InputInterface;
 use function Neblabs\DynamicData\dynamicHeaders;
 use function Neblabs\HeaderParser\parse;
+use function PHPUnit\Framework\throwException;
 
 class HeaderInjectorCommand
 {
@@ -19,15 +20,14 @@ class HeaderInjectorCommand
         #[Argument(description: 'Where the data will be written (dir).')] string $target,
         #[Argument(description: 'Where the data will be written (dir).')] string $wpTestedVersion,
         #[Option(description: "Used for getting versions from tags. Defaults to cwd.", name: 'git-source' )] string $gitDir = ''
-    ): void
+    ): int
     {
         # read the env from source dir
         $options = new Options(
-            source: $source,
+            source: $source === '.'? getcwd() : $source,
             target: $target,
             wpTestedVersion: $wpTestedVersion,
             gitDir: $gitDir,
-            env: new Env("$source/".static::ENV_FILENAME)
         );
 
         # get the plugin in and put
@@ -46,7 +46,7 @@ class HeaderInjectorCommand
 
         foreach ($fileSources as $fileSource) {
             # read the source files into memory
-            $contents = file_get_contents("{$source}/{$fileSource['source']}");
+            $contents = file_get_contents("{$options->source}/{$fileSource['source']}");
             # read the source headers into memory
             $sourceHeaders = parse($contents, $fileSource['type']);
             $sourceHeadersData = $sourceHeaders->values;
@@ -81,8 +81,17 @@ class HeaderInjectorCommand
             // I dont know if mkdir recursive works the same as mkdir -p in that it also ignores existing dirs so to prevent wiping lets check for it first.
             !is_dir($target) && mkdir($target, recursive: true);
 
-            file_put_contents("$target/{$fileSource['target']}", $newContent);
+            $targetFile = "$target/{$fileSource['target']}";
+            $result = file_put_contents($targetFile, $newContent);
+
+            if (!$result) {
+                throw new \Exception("could not write target file $target/{$fileSource['target']}");
+            }
+
+            echo "$targetFile\n";
         }
+
+        return 0; # ok
     }
 
     private function removeInvalidValues(array $headers) : array
