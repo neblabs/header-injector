@@ -1,46 +1,48 @@
 # Header Injector
 
-Dynamically inject metadata into WordPress plugin and readme headers. 
+Dynamically inject metadata into WordPress plugin and readme headers.
+
+## Why?
+
+Because nobody wants to update these values manually. It is a pain to update the version manually on every release. By automating this you ensure your plugin and readme files are always in sync and your versions are always updated accordingly. Add this to your CI/CD pipeline and forget about updating these header values ever again. 
 
 ---
 
-* **Plugin Header (`PHP`)**: Grabs the **latest tag** starting with `v` (e.g., `v1.2.0`, `v1.2.0-rc-1`, `v2.0.0-beta`), ideal for unstable/prerelease builds.
-* **Readme Header (`MD/TXT`)**: Filters specifically for the **latest stable tag** matching strict SemVer (`vX.X.X`), completely ignoring unstable tags like `-rc` or `-beta`.
+* **Plugin Header (`PHP`)**: Grabs the **latest git tag** starting with `v` (e.g., `v1.2.0`, `v1.2.0-rc-1`, `v2.0.0-beta`)
+* **Readme Header (`MD/TXT`)**: Uses the **latest stable tag** matching SemVer (`vX.X.X`), completely ignoring unstable tags like `-rc` or `-beta`.
 
 ---
 
 ## Requirements
 
 * PHP 8.4 or higher
-* Git (must be accessible via CLI in the target system)
+* Git (must be accessible via CLI in the target system). Your repository must be using tags in the format vX.X.X.
 
 ---
 
 ## Installation
 
-### A - Add the package to your `composer.json`:
 
+
+### Local Installation
+
+Run the installer
 ```bash
-composer require neblabs/header-injector
-
+curl -L https://raw.githubusercontent.com/neblabs/header-injector/main/bin/install.sh | sh
 ```
 
-### B - Local Installation
-
-To download the latest compiled PHAR directly from your repository's GitHub Releases and make it executable globally on your system:
+Or download the latest compiled PHAR directly and make it executable globally:
 
 ```bash
-# Download the PHAR to your local bin directory
 sudo curl -sSL https://github.com/neblabs/header-injector/releases/latest/download/header-injector.phar -o "$HOME"/.local/bin/header-injector
 
-# Make it executable
 sudo chmod +x "$HOME"/.local/bin/header-injector
 
 ```
 
 ### Verification
 
-Once installed, you can invoke it from anywhere without needing PHP prefixed:
+Once installed, you can invoke it from anywhere:
 
 ```bash
 header-injector inject . ./dist 6.7 --git-source .
@@ -86,6 +88,30 @@ bin/header-injector inject ./src ./dist 6.5 --git-source=./
 *Note: Leading `v` prefixes on Git tags are automatically stripped when injected.*
 
 ---
+
+## Headers map & data sources
+### 1. Plugin File Headers (`.php`)
+
+| Header Key | Data Source / Resolution Logic                                                                                   | Example Source |
+| --- |------------------------------------------------------------------------------------------------------------------| --- |
+| **Plugin URI** | `urls.plugin` (env.php)                                                                                          | `'[https://example.com/plugin](https://example.com/plugin)'` |
+| **Version** | Latest Git tag starting with `v[0-9]` *(includes unstable tags like `rc`, `beta`, `alpha`)*. Strips leading `v`. | Git tag `v1.2.0-rc-1` |
+| **Author URI** | `urls.organization` (env.php)                                                                                    | `'[https://example.com](https://example.com)'` |
+| **Requires at least** | `requires.wp` (env.php)                                                                                          | `'6.0'` |
+| **Requires PHP** | `requires.php` (env.php)                                                                                                  | `'7.4'` |
+
+---
+
+### 2. Readme File Headers (`.md` / `readme.txt`)
+
+| Header Key | Data Source / Resolution Logic                                                                                       | Example Source |
+| --- |----------------------------------------------------------------------------------------------------------------------| --- |
+| **Requires at least** | `requires.wp` (env.php)                                                                                              | `'6.0'` |
+| **Tested up to** | CLI Argument `<tested-wp-version>`                                                                                   | CLI input `7.0.6` |
+| **Stable tag** | Latest **stable** SemVer Git tag matching `^v[0-9]+\.[0-9]+\.[0-9]+$` *(ignores unstable tags)*. Strips leading `v`. | Git tag `v1.1.0` *(skips `v1.2.0-beta`)* |
+| **Requires PHP** | `requires.php` (env.php)                                                                                                      | `'7.4'` |
+
+> **Note:** Any header value resolved as `null`, `false`, or `'unknown'` is automatically filtered out and omitted from the target file during injection.
 
 ## Configuration (`env.php`)
 
@@ -140,7 +166,7 @@ To ensure all Git tags are present when running this tool in CI, make sure to fe
 When running `header-injector` inside GitHub Actions (e.g., when generating release zips or build artifacts for a WordPress plugin), add this step to your workflow.
 
 > [!IMPORTANT]
-> You **must** set `fetch-depth: 0` on `actions/checkout` so Git downloads all tags. Without this, shallow clones will cause `git tag` to return empty results.
+> You **must** fetch all the tags or set `fetch-depth: 0` on `actions/checkout` so Git downloads all tags. Without this, shallow clones will cause `git tag` to return empty results.
 
 ### Sample Workflow (`.github/workflows/build-plugin.yml`)
 
@@ -160,8 +186,9 @@ jobs:
       # 1. Checkout the repository with full tag history
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      # Fetch tags manually:
+      - name: Fetch Git Tags
+        run: git fetch --tags --force
 
       # 2. Set up PHP environment
       - name: Setup PHP
@@ -172,30 +199,19 @@ jobs:
       # 3. Download header-injector PHAR from GitHub Releases
       - name: Download Header Injector
         run: |
-          curl -sSL https://github.com/neblabs/header-injector/releases/latest/download/header-injector.phar -o /usr/local/bin/header-injector
-          chmod +x /usr/local/bin/header-injector
+          curl -L https://raw.githubusercontent.com/neblabs/header-injector/main/bin/install.sh | sh
 
       # 4. Create target build directory and inject headers
       - name: Inject Plugin Headers
         run: |
           # inject it in the same dir
-          header-injector inject . . 6.7 --git-source .
+          "$HOME"/.local/bin/header-injector inject . . 6.7 --git-source .
 
           # inject it in a different dir
-          # header-injector inject . ./dist 6.7 --git-source .
+          # "$HOME"/.local/bin/header-injector inject . ./dist 6.7 --git-source .
 
 ```
 
----
-
-### How the CI Flow Operates
-
-1. You tag your plugin repo (e.g. `v1.2.0-rc.1` or `v1.2.0`).
-2. GitHub Actions runs `actions/checkout` with full tag depth.
-3. It downloads `header-injector.phar` on the fly (no need to store vendor dependencies or binaries in your plugin repo).
-4. `header-injector` inspects the tags, extracts `1.2.0-rc.1` for the PHP header, `1.2.0` (or last stable) for `readme.md`, and places the injected files directly in `./dist`.
-
----
 ---
 
 ## License
