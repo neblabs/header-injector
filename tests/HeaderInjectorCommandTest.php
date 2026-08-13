@@ -90,4 +90,25 @@ class HeaderInjectorCommandTest extends TestCase
         $this->assertFileEquals("$expectedDir/readme.md", $targetMDFile, $targetMDFile);
     }
 
+    public function test_as_cli()
+    {
+        $source = __DIR__ . '/fixtures/in';
+        $target = sys_get_temp_dir() . '/' . microtime();
+        $gitDir = __DIR__ . '/fixtures/git-dir';
+        $expectedDir = __DIR__ . '/fixtures/out';
+
+        //$command(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: 6.8);
+
+        $rootDir = dirname(__FILE__, 2);
+        $injector = "$rootDir/bin/header-injector";
+
+        system("php $injector inject '$source' '$target' 6.8 --git-source '$gitDir' --silent");
+
+        $targetPHPFile = "$target/coupons-plus-for-woocommerce.php";
+        $targetMDFile = "$target/readme.md";
+
+        $this->assertFileEquals("$expectedDir/index.php", $targetPHPFile, $targetPHPFile);
+        $this->assertFileEquals("$expectedDir/readme.md", $targetMDFile, $targetMDFile);
+    }
+
 }
