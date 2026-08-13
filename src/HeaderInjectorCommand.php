@@ -30,7 +30,6 @@ class HeaderInjectorCommand
             gitDir: $gitDir,
         );
 
-        # get the plugin in and put
         $fileSources = [
             [
                 'type' => 'php',
@@ -85,7 +84,7 @@ class HeaderInjectorCommand
             $result = file_put_contents($targetFile, $newContent);
 
             if (!$result) {
-                throw new \Exception("could not write target file $target/{$fileSource['target']}");
+                throw new \Exception("could not write target file $targetFile");
             }
 
             echo "$targetFile\n";
