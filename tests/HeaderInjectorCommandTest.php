@@ -43,7 +43,7 @@ class HeaderInjectorCommandTest extends TestCase
         $gitDir = __DIR__ . '/fixtures/git-dir';
         $expectedDir = __DIR__ . '/fixtures/out';
 
-        $command(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: 6.8);
+        $command(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: 6.8, silent: true);
 
         $targetPHPFile = "$target/coupons-plus-for-woocommerce.php";
         $targetMDFile = "$target/readme.md";
@@ -62,7 +62,7 @@ class HeaderInjectorCommandTest extends TestCase
         $gitDir = __DIR__ . '/fixtures/git-dir';
         $expectedDir = __DIR__ . '/fixtures/out-mixed';
 
-        $command(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: 6.8);
+        $command(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: 6.8, silent: true);
 
         $targetFile = "$target/coupons-plus-for-woocommerce.php";
 
@@ -81,7 +81,7 @@ class HeaderInjectorCommandTest extends TestCase
         $gitDir = __DIR__ . '/fixtures/git-dir-unstable-tags';
         $expectedDir = __DIR__ . '/fixtures/out-unstable';
 
-        $command(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: 6.8);
+        $command(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: 6.8, silent: true);
 
         $targetPHPFile = "$target/coupons-plus-for-woocommerce.php";
         $targetMDFile = "$target/readme.md";
@@ -97,7 +97,7 @@ class HeaderInjectorCommandTest extends TestCase
         $gitDir = __DIR__ . '/fixtures/git-dir';
         $expectedDir = __DIR__ . '/fixtures/out';
 
-        //$command(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: 6.8);
+        //$command(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: 6.8, silent: true);
 
         $rootDir = dirname(__FILE__, 2);
         $injector = "$rootDir/bin/header-injector";
