@@ -1,0 +1,44 @@
+name: Release PHAR
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Ensures all git tags are fetched for box/git resolution
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Install Production Dependencies
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-progress
+
+      - name: Download Box PHAR
+        run: |
+          curl -LSs https://github.com/box-project/box/releases/latest/download/box.phar -o box
+          chmod +x box
+
+      - name: Compile PHAR
+        run: ./box compile
+
+      - name: Create GitHub Release & Upload Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/header-injector.phar
+          prerelease: ${{ contains(github.ref, '-') }} # Auto-marks tags with '-rc', '-beta', etc. as pre-releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
