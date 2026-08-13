@@ -28,8 +28,10 @@ function resolvePHPHeaders(Options $options): array
         'Version' => (function () use ($options) {
             # first cd into the git dir if given one.
             $cd =  $options->gitDir ?: getcwd();
+            $versionsFinder = getVersionsFinder();
+
             # any starting with v.x.x.x, version can be unstable
-            $version = trim(shell_exec("cd \"$cd\" && git tag | grep \"^v[0-9]\" | sort -Vr | head -n 1")) ?: null;
+            $version = trim(shell_exec("cd \"$cd\" && bash $versionsFinder any --latest")) ?: null;
 
             if (strtolower($version[0]) === 'v') {
                 $version = substr($version, offset: 1);
@@ -41,6 +43,16 @@ function resolvePHPHeaders(Options $options): array
         'Requires at least' => $options->env->get('requires.wp', null),
         'Requires PHP' => $options->env->get('requires.php', null),
     ];
+}
+
+/**
+ * @return string
+ */
+function getVersionsFinder(): string
+{
+    $rootDir = dirname(__FILE__, 2);
+    $versionsFinder = "$rootDir/bin/versions-finder";
+    return $versionsFinder;
 }
 
 function resolveMDHeaders(Options $options): array
@@ -59,8 +71,9 @@ function resolveMDHeaders(Options $options): array
         'Stable tag' => (function () use ($options) {
             # first cd into the git dir if given one.
             $cd =  $options->gitDir ?: getcwd();
+            $versionsFinder = getVersionsFinder();
             //only find the version that matches a stable semver, any other (unstable) gets ignored
-            $version = trim(shell_exec("cd \"$cd\" &&  git tag | grep -E \"^v[0-9]+\.[0-9]+\.[0-9]+$\" | sort -Vr | head -n 1")) ?: null;
+            $version = trim(shell_exec("cd \"$cd\" &&  bash $versionsFinder stable --latest")) ?: null;
 
             if (strtolower($version[0]) === 'v') {
                 $version = substr($version, offset: 1);
