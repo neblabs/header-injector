@@ -4,7 +4,7 @@ Dynamically inject metadata into WordPress plugin and readme headers.
 
 ## Why?
 
-Because nobody wants to update these values manually. It is a pain to update the version manually on every release. By automating this you ensure your plugin and readme files are always in sync and your versions are always updated accordingly. Add this to your CI/CD pipeline and forget about updating these header values ever again. 
+Because nobody wants to update these values manually. It is a pain to update the version manually on every release. By automating this you ensure your plugin and readme files are always in sync and your versions are always updated accordingly. Add this to your CI/CD pipeline and forget about updating these header values ever again. Good riddance to that! Also this package was 100% handwritten :).
 
 ---
 
@@ -12,6 +12,70 @@ Because nobody wants to update these values manually. It is a pain to update the
 * **Readme Header (`MD/TXT`)**: Uses the **latest stable tag** matching SemVer (`vX.X.X`), completely ignoring unstable tags like `-rc` or `-beta`.
 
 ---
+
+# Example
+
+Source: 
+```php
+<?php
+/*
+* Plugin Name:       Coupons+
+* Plugin URI:        unknown
+* Description:       Next-generation coupon offers engine for WooCommerce. Create advanced deals, smart BOGO offers, and more!
+* Version:           dev
+* Author:            neblabs
+* Requires at least: unknown
+* Requires PHP:      unknown
+* License: GPLv3
+  */
+```
+
+Becomes
+
+```php
+<?php
+/*
+* Plugin Name:       Coupons+
+* Plugin URI:        example.com
+* Description:       Next-generation coupon offers engine for WooCommerce. Create advanced deals, smart BOGO offers, and more!
+* Version:           3.3.1-beta-1
+* Author:            neblabs
+* Author URI:        neblabs.com
+* Requires at least: 5.8
+* Requires PHP:      7.4
+* License: GPLv3
+  */
+```
+...And
+
+```md
+=== Coupons+ ===
+Contributors: neblabs
+Tags: woocommerce, coupons, bogo, discounts, pricing
+Requires at least: unknown
+Tested up to: unknown
+Stable tag: unknown
+Requires PHP: unknown
+License: GPLv3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
+```
+
+Becomes...
+
+```md
+=== Coupons+ ===
+Contributors: neblabs
+Tags: woocommerce, coupons, bogo, discounts, pricing
+Requires at least: 5.8
+Tested up to: 7.0.1
+Stable tag: 3.3.0
+Requires PHP: 7.4
+License: GPLv3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
+```
+
+All injected and synced automatically!
+
 
 ## Requirements
 
@@ -21,8 +85,6 @@ Because nobody wants to update these values manually. It is a pain to update the
 ---
 
 ## Installation
-
-
 
 ### Local Installation
 
@@ -205,10 +267,12 @@ jobs:
       - name: Inject Plugin Headers
         run: |
           # inject it in the same dir
-          "$HOME"/.local/bin/header-injector inject . . 6.7 --git-source .
+          "$HOME"/.local/bin/header-injector inject . . "$testedWPVersion" --git-source .
 
           # inject it in a different dir
-          # "$HOME"/.local/bin/header-injector inject . ./dist 6.7 --git-source .
+          # "$HOME"/.local/bin/header-injector inject . ./dist "$testedWPVersion" --git-source .
+          
+          # "$testedWPVersion" in practice should come from the latest version installed in the env, its all automated! Literally set and forget :)
 
 ```
 
