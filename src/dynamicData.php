@@ -45,16 +45,6 @@ function resolvePHPHeaders(Options $options): array
     ];
 }
 
-/**
- * @return string
- */
-function getVersionsFinder(): string
-{
-    $rootDir = dirname(__FILE__, 2);
-    $versionsFinder = "$rootDir/bin/versions-finder";
-    return $versionsFinder;
-}
-
 function resolveMDHeaders(Options $options): array
 {
     /*
@@ -86,4 +76,12 @@ function resolveMDHeaders(Options $options): array
 }
 
 
-
+/**
+ * @return string
+ */
+function getVersionsFinder(): string
+{
+    $rootDir = dirname(__FILE__, 2);
+    $versionsFinder = "$rootDir/bin/versions-finder";
+    return $versionsFinder;
+}
