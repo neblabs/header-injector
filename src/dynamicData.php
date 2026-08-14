@@ -31,11 +31,7 @@ function resolvePHPHeaders(Options $options): array
             $versionsFinder = getVersionsFinder();
 
             # any starting with v.x.x.x, version can be unstable
-            $version = trim(shell_exec("cd \"$cd\" && bash $versionsFinder any --latest")) ?: null;
-
-            if (strtolower($version[0]) === 'v') {
-                $version = substr($version, offset: 1);
-            }
+            $version = trim(shell_exec("cd \"$cd\" && bash $versionsFinder any --latest --output-strict-semver")) ?: null;
 
             return $version;
         })(),
@@ -63,11 +59,7 @@ function resolveMDHeaders(Options $options): array
             $cd =  $options->gitDir ?: getcwd();
             $versionsFinder = getVersionsFinder();
             //only find the version that matches a stable semver, any other (unstable) gets ignored
-            $version = trim(shell_exec("cd \"$cd\" &&  bash $versionsFinder stable --latest")) ?: null;
-
-            if (strtolower($version[0]) === 'v') {
-                $version = substr($version, offset: 1);
-            }
+            $version = trim(shell_exec("cd \"$cd\" &&  bash $versionsFinder stable --latest --output-strict-semver")) ?: null;
 
             return $version;
         })(),

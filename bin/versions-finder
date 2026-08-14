@@ -7,13 +7,15 @@
 
 
 function print-usage() {
-    echo "Usage: $0 <any|stable|unstable|beta|alpha|rc> [--(any|a) | --(latest|l) | --(previous|p) | --(limit|n) n]" 1>&2
+    echo "Usage: $0 <any|stable|unstable|beta|alpha|rc> [--(any|a) | --(latest|l) | --(previous|p) | --(limit|n) n] [--output-strict-semver]" 1>&2
     exit 1
 }
 
 version_type=$1
 limit=unlimited
-# remove required arg:
+outputStrictSemver=false
+
+# remove required arg so that we may process options bellow
 shift
 
 if [[ -z "$version_type" ]] || ! [[ "$version_type" =~ ^(any|stable|unstable|beta|alpha|rc)$ ]]; then
@@ -43,6 +45,10 @@ while [[ $# -gt 0 ]]; do
             
             shift 2
         ;;
+        --output-strict-semver)
+            outputStrictSemver=true
+            shift
+        ;;
         *)
             print-usage
         ;;
@@ -67,7 +73,12 @@ esac
 
 
 fetch-tags() {
-    git tag --sort=-v:refname | grep -E "$pattern" || exit 1
+    (git tag --sort=-v:refname | grep -E "$pattern" || exit 1) | while read -r version || [[ -n "$version" ]]; do
+        if $outputStrictSemver && [[ "$version" =~ ^v ]]; then
+            version="${version:1}"
+        fi
+        echo "$version"
+    done;
 }
 
 case $limit in
