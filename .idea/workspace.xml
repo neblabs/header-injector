@@ -127,19 +127,9 @@
       <workItem from="1786572805001" duration="9605000" />
       <workItem from="1786582438010" duration="1537000" />
       <workItem from="1786649656427" duration="4160000" />
+      <workItem from="1786659751921" duration="1001000" />
     </task>
     <servers />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/tests/HeaderInjectorCommandTest.php</url>
-          <line>104</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

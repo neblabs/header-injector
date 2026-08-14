@@ -2,33 +2,19 @@
 
 namespace Neblabs\HeaderInjector;
 
-use Symfony\Component\Console\Attribute\Argument;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Attribute\Option;
 use function Neblabs\DynamicData\dynamicHeaders;
 use function Neblabs\HeaderParser\parse;
 
-class HeaderInjectorCommand
+class fileReader
 {
-    public const string ENV_FILENAME = 'env.php';
-    #[AsCommand(name: 'inject', description: 'Injects header data into plugin and readme files')]
-    public function __invoke(
-        #[Argument(description: 'Where the data will be read (dir). Usually the plugin dir in some shape.')] string $source,
-        #[Argument(description: 'Where the data will be written (dir).')] string $target,
-        #[Argument(description: 'Where the data will be written (dir).')] string $wpTestedVersion,
-        #[Option(description: "Used for getting versions from tags. Defaults to cwd.", name: 'git-source' )] string $gitDir = '',
-        #[Option(description: "Used for getting versions from tags. Defaults to cwd." )] bool $silent = false
-    ): int
-    {
-        # read the env from source dir
-        $options = new Options(
-            source: $source === '.'? getcwd() : $source,
-            target: $target,
-            wpTestedVersion: $wpTestedVersion,
-            gitDir: $gitDir,
-        );
+    /**
+     * @var array|array[]
+     */
+    private array $fileSources;
 
-        $fileSources = [
+    public function __construct()
+    {
+        $this->fileSources = [
             [
                 'type' => 'php',
                 'source' => $options->env->get('files.plugin.in'),
@@ -39,8 +25,11 @@ class HeaderInjectorCommand
                 'source' => $options->env->get('files.readme'),
                 'target' => $options->env->get('files.readme'),
             ],
-        ];
+        ]
+    }
 
+    public function read(callable $operator)
+    {
         foreach ($fileSources as $fileSource) {
             # read the source files into memory
             $contents = file_get_contents("{$options->source}/{$fileSource['source']}");
@@ -89,12 +78,5 @@ class HeaderInjectorCommand
                 echo "$targetFile\n";
             }
         }
-
-        return 0; # ok
-    }
-
-    private function removeInvalidValues(array $headers) : array
-    {
-        return array_filter(callback: fn($value) => $value !== 'unknown' && $value, array: $headers);
     }
 }

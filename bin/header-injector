@@ -6,10 +6,12 @@
 require __DIR__.'/../vendor/autoload.php';
 
 use Neblabs\HeaderInjector\HeaderInjectorCommand;
+use Neblabs\HeaderInjector\HeaderValidatorCommand;
 use Symfony\Component\Console\Application;
 
 $application = new Application();
 
 $application->addCommand(new HeaderInjectorCommand);
+$application->addCommand(new HeaderValidatorCommand);
 //$application->setDefaultCommand('inject');
 $application->run();

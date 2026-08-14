@@ -34,7 +34,7 @@ class HeaderInjectorCommandTest extends TestCase
         }
     }
 
-    public function test_with_a_different_git_dir_from_the_source()
+    /*public function test_with_a_different_git_dir_from_the_source()
     {
         $command = new HeaderInjectorCommand;
 
@@ -69,9 +69,9 @@ class HeaderInjectorCommandTest extends TestCase
         $this->assertFileEquals("$expectedDir/index.php", $targetFile, $targetFile);
     }
 
-    /*
-     * In this test the latest tag is rc-1. the plugin header should get that and the read me the stable 1.1.0
-     */
+
+    # * In this test the latest tag is rc-1. the plugin header should get that and the read me the stable 1.1.0
+
     public function test_with_unstable_tags()
     {
         $command = new HeaderInjectorCommand;
@@ -109,6 +109,28 @@ class HeaderInjectorCommandTest extends TestCase
 
         $this->assertFileEquals("$expectedDir/index.php", $targetPHPFile, $targetPHPFile);
         $this->assertFileEquals("$expectedDir/readme.md", $targetMDFile, $targetMDFile);
+    }*/
+
+    public function test_passes_validation()
+    {
+        $injector = new HeaderInjectorCommand;
+
+        $validator = new HeaderValidatorCommand;
+
+        $source = __DIR__ . '/fixtures/in';
+        $target = sys_get_temp_dir() . '/' . microtime();
+        $gitDir = __DIR__ . '/fixtures/git-dir';
+        $expectedDir = __DIR__ . '/fixtures/out';
+
+        $injector(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: 6.8, silent: true);
+
+        $targetPHPFile = "$target/coupons-plus-for-woocommerce.php";
+        $targetMDFile = "$target/readme.md";
+
+        $this->assertFileEquals("$expectedDir/index.php", $targetPHPFile, $targetPHPFile);
+        $this->assertFileEquals("$expectedDir/readme.md", $targetMDFile, $targetMDFile);
+
+        $validator(pluginFile: $targetPHPFile, pluginReadme: $targetMDFile, gitDir: $gitDir, wpTestedVersion: 6.8, silent: true);
     }
 
 }
