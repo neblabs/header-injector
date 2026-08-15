@@ -28,10 +28,9 @@ function resolvePHPHeaders(Options $options): array
         'Version' => (function () use ($options) {
             # first cd into the git dir if given one.
             $cd =  $options->gitDir ?: getcwd();
-            $versionsFinder = getVersionsFinder();
 
             # any starting with v.x.x.x, version can be unstable
-            $version = trim(shell_exec("cd \"$cd\" && bash $versionsFinder any --latest --output-strict-semver")) ?: null;
+            $version = trim(shell_exec("cd \"$cd\" && versions-finder any --latest --output-strict-semver")) ?: null;
 
             return $version;
         })(),
@@ -57,23 +56,11 @@ function resolveMDHeaders(Options $options): array
         'Stable tag' => (function () use ($options) {
             # first cd into the git dir if given one.
             $cd =  $options->gitDir ?: getcwd();
-            $versionsFinder = getVersionsFinder();
             //only find the version that matches a stable semver, any other (unstable) gets ignored
-            $version = trim(shell_exec("cd \"$cd\" &&  bash $versionsFinder stable --latest --output-strict-semver")) ?: null;
+            $version = trim(shell_exec("cd \"$cd\" && versions-finder stable --latest --output-strict-semver")) ?: null;
 
             return $version;
         })(),
         'Tested up to' => $options->wpTestedVersion,
     ];
-}
-
-
-/**
- * @return string
- */
-function getVersionsFinder(): string
-{
-    $rootDir = dirname(__FILE__, 2);
-    $versionsFinder = "$rootDir/bin/versions-finder";
-    return $versionsFinder;
 }

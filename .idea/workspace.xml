@@ -84,6 +84,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;com.jetbrains.php.phpunit.codeGeneration.PhpNewTestDialog.defaultLibrary&quot;: &quot;PHPUnit&quot;,
+    &quot;last.edited.regexp&quot;: &quot;v10.4.5-refex&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/rafa/dev/header-injector/tests/fixtures&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.general&quot;
   }
@@ -128,6 +129,9 @@
       <workItem from="1786582438010" duration="1537000" />
       <workItem from="1786649656427" duration="4160000" />
       <workItem from="1786659751921" duration="1001000" />
+      <workItem from="1786661415263" duration="11535000" />
+      <workItem from="1786811764121" duration="12000" />
+      <workItem from="1786823514463" duration="1022000" />
     </task>
     <servers />
   </component>

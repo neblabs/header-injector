@@ -93,8 +93,7 @@ class HeaderValidatorCommand
             $versionsType = 'stable';
         }
 
-        $versionsFinder = getVersionsFinder();
-        $latestVersion = system("cd $gitDir && bash $versionsFinder $versionsType --latest --output-strict-semver");
+        $latestVersion = system("cd $gitDir && versions-finder $versionsType --latest --output-strict-semver");
 
         if ($latestVersion !== $version) {
             throw new \Exception("Version in $type header is not the same as the '$versionsType' tag version. $type $version, latest $latestVersion");
