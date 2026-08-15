@@ -16,9 +16,9 @@ class HeaderValidatorCommand
         #[Argument(description: 'The path to the plugins main file')] string $pluginFile,
         #[Argument(description: 'The path to the plugins readme')] string $pluginReadme,
         #[Argument(description: 'Where the data will be written (dir).')] string $wpTestedVersion,
-        #[Option(description: "Used for getting versions from tags. Defaults to cwd.", name: 'git-source' )] string $gitDir = '',
-        #[Option(description: "Used for getting versions from tags. Defaults to cwd." )] bool $silent = false
+        #[Option(description: "Used for getting versions from tags. Defaults to cwd.", name: 'git-source' )] string $gitDir = '.',
     ) {
+        $gitDir = $gitDir === '.' ? getcwd() : $gitDir;
         # read the env from source dir
         $fileSources = [
             [
@@ -93,11 +93,20 @@ class HeaderValidatorCommand
             $versionsType = 'stable';
         }
 
-        $latestVersion = system("cd $gitDir && versions-finder $versionsType --latest --output-strict-semver");
+        $latestVersion = trim(system("cd $gitDir && versions-finder $versionsType --latest --output-strict-semver"));
+
+        if (!$latestVersion) {
+            throw new \Exception("No $version version found in this repo: $gitDir");
+        }
+
+        if (!trim($version)) {
+            throw new \Exception("No version found in the source file: $type");
+        }
 
         if ($latestVersion !== $version) {
             throw new \Exception("Version in $type header is not the same as the '$versionsType' tag version. $type $version, latest $latestVersion");
         }
+
     }
 
     private function checkAllVersionsAreValidNumbers(array $sourceHeadersData)

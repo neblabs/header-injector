@@ -16,7 +16,7 @@ class HeaderInjectorCommand
         #[Argument(description: 'Where the data will be read (dir). Usually the plugin dir in some shape.')] string $source,
         #[Argument(description: 'Where the data will be written (dir).')] string $target,
         #[Argument(description: 'Where the data will be written (dir).')] string $wpTestedVersion,
-        #[Option(description: "Used for getting versions from tags. Defaults to cwd.", name: 'git-source' )] string $gitDir = '',
+        #[Option(description: "Used for getting versions from tags. Defaults to cwd.", name: 'git-source' )] string $gitDir = '.',
         #[Option(description: "Used for getting versions from tags. Defaults to cwd." )] bool $silent = false
     ): int
     {
