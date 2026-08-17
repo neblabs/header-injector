@@ -16,7 +16,7 @@ use CouponsPlus\Original\Installation;
  * Requires at least: 5.8
  * Requires Plugins: woocommerce
  * License: GPLv3
- * Author URI: neblabs.com
+ * Author URI: https://neblabs.com
 */
 
 /*

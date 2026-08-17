@@ -4,11 +4,11 @@ use CouponsPlus\Original\Installation;
 
 /*
  * Plugin Name: Coupons+
- * Plugin URI: couponsplus.app
+ * Plugin URI: https://couponsplus.app
  * Description: Next-generation coupon offers engine for WooCommerce. Create advanced deals, smart BOGO offers, and more!
  * Version: 1.1.0
  * Author: neblabs
- * Author URI: neblabs.com
+ * Author URI: https://neblabs.com
  * Text Domain: coupons-plus-for-woocommerce
  * Domain Path: /international
  * Requires at least: 5.8

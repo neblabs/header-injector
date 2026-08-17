@@ -24,7 +24,7 @@ function resolvePHPHeaders(Options $options): array
      */
 
     return [
-        'Plugin URI' => $options->env->get('urls.plugin', null),
+        'Plugin URI' => ensure_url($options->env->get('urls.plugin', null)),
         'Version' => (function () use ($options) {
             # first cd into the git dir if given one.
             $cd =  $options->gitDir ?: getcwd();
@@ -34,10 +34,20 @@ function resolvePHPHeaders(Options $options): array
 
             return $version;
         })(),
-        'Author URI' => $options->env->get('urls.organization', null),
+        'Author URI' => ensure_url($options->env->get('urls.organization', null)),
         'Requires at least' => $options->env->get('requires.wp', null),
         'Requires PHP' => $options->env->get('requires.php', null),
     ];
+}
+
+function ensure_url(string $url) : string
+{
+
+    if ($url && strpos(needle: 'http', haystack: trim($url)) !== 0) {
+        return "https://$url";
+    }
+
+    return $url;
 }
 
 function resolveMDHeaders(Options $options): array
