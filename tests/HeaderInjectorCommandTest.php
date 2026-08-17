@@ -34,7 +34,7 @@ class HeaderInjectorCommandTest extends TestCase
         }
     }
 
-    /*public function test_with_a_different_git_dir_from_the_source()
+    public function test_with_a_different_git_dir_from_the_source()
     {
         $command = new HeaderInjectorCommand;
 
@@ -43,7 +43,8 @@ class HeaderInjectorCommandTest extends TestCase
         $gitDir = __DIR__ . '/fixtures/git-dir';
         $expectedDir = __DIR__ . '/fixtures/out';
 
-        $command(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: 6.8, silent: true);
+        # notice the wp tested version if fully semver but the actual injected version is a minor only (6.8)
+        $command(source: $source, target: $target, gitDir: $gitDir, wpTestedVersion: '6.8.3', silent: true);
 
         $targetPHPFile = "$target/coupons-plus-for-woocommerce.php";
         $targetMDFile = "$target/readme.md";
@@ -109,7 +110,7 @@ class HeaderInjectorCommandTest extends TestCase
 
         $this->assertFileEquals("$expectedDir/index.php", $targetPHPFile, $targetPHPFile);
         $this->assertFileEquals("$expectedDir/readme.md", $targetMDFile, $targetMDFile);
-    }*/
+    }
 
     public function test_passes_validation()
     {
@@ -130,7 +131,7 @@ class HeaderInjectorCommandTest extends TestCase
         $this->assertFileEquals("$expectedDir/index.php", $targetPHPFile, $targetPHPFile);
         $this->assertFileEquals("$expectedDir/readme.md", $targetMDFile, $targetMDFile);
 
-        $validator(pluginFile: $targetPHPFile, pluginReadme: $targetMDFile, gitDir: $gitDir, wpTestedVersion: 6.8, silent: true);
+        $validator(pluginFile: $targetPHPFile, pluginReadme: $targetMDFile, gitDir: $gitDir, wpTestedVersion: 6.8,);
     }
 
 }

@@ -49,6 +49,10 @@ function resolveMDHeaders(Options $options): array
      *  -Requires PHP: requires.php
      *
      */
+    $testedMatches = [];
+
+    preg_match(subject: $options->wpTestedVersion, pattern: '/^([0-9].[0-9])/', matches: $testedMatches);
+
     return [
         'Requires at least' => $options->env->get('requires.wp', null),
         'Requires PHP' => $options->env->get('requires.php', null),
@@ -61,6 +65,6 @@ function resolveMDHeaders(Options $options): array
 
             return $version;
         })(),
-        'Tested up to' => $options->wpTestedVersion,
+        'Tested up to' => $testedMatches[1],
     ];
 }
