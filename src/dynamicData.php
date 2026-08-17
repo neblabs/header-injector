@@ -81,7 +81,7 @@ function extractMinorVersion(string $semver) : string
 {
     $testedMatches = [];
 
-    preg_match(subject: $semver, pattern: '/^([0-9].[0-9])/', matches: $testedMatches);
+    preg_match(subject: $semver, pattern: '/^([0-9]+.[0-9]+)/', matches: $testedMatches);
 
     return $testedMatches[1];
 }
