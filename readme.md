@@ -90,7 +90,7 @@ All injected and synced automatically!
 
 Run the installer
 ```bash
-curl -L https://raw.githubusercontent.com/neblabs/header-injector/main/bin/install.sh | sh
+curl -L https://raw.githubusercontent.com/neblabs/header-injector/main/bin/install.sh | bash
 ```
 
 Or download the latest compiled PHAR directly and make it executable globally:
