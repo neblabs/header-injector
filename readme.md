@@ -81,6 +81,7 @@ All injected and synced automatically!
 
 * PHP 8.4 or higher
 * Git (must be accessible via CLI in the target system). Your repository must be using tags in the format vX.X.X.
+* versions-finder: https://github.com/neblabs/versions-finder
 
 ---
 
@@ -88,7 +89,7 @@ All injected and synced automatically!
 
 ### Local Installation
 
-Run the installer
+Run the installer (will also install versions-finder)
 ```bash
 curl -L https://raw.githubusercontent.com/neblabs/header-injector/main/bin/install.sh | bash
 ```
