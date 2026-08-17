@@ -6,6 +6,7 @@ use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
 use function Neblabs\DynamicData\dynamicHeaders;
+use function Neblabs\DynamicData\extractMinorVersion;
 use function Neblabs\DynamicData\getVersionsFinder;
 use function Neblabs\HeaderParser\parse;
 
@@ -126,7 +127,8 @@ class HeaderValidatorCommand
 
     private function checkWPVersionMatches(array $sourceHeadersData, string $wpTestedVersion)
     {
-        if ($sourceHeadersData['Tested up to'] !== $wpTestedVersion) {
+
+        if (extractMinorVersion($sourceHeadersData['Tested up to']) !== extractMinorVersion($wpTestedVersion)) {
             throw new \Exception("tested up to doesn't match. source: {$sourceHeadersData['Tested up to']}, given: $wpTestedVersion");
         }
     }
